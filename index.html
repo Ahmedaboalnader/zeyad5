@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>First Aid Question Bank – Dr Zeyad</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: #f3f5f9;
+      color: #222;
+      direction: rtl;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 20px; }
+    header h1 { font-size: 26px; margin-bottom: 8px; }
+    header p { font-size: 14px; margin: 2px 0; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .stat-box {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .stat-label { font-size: 13px; color: #555; }
+    .stat-value {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 4px;
+      color: #007b83;
+    }
+    .controls {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+    .search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .search-row input {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .filters-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-left: 16px;
+    }
+    .filters-label {
+      font-size: 13px;
+      font-weight: bold;
+      align-self: center;
+    }
+    .btn {
+      border: none;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #e2e6f0;
+      color: #222;
+      transition: all 0.15s ease;
+    }
+    .btn:hover { background: #cbd3e6; }
+    .btn.active {
+      background: #007b83;
+      color: #fff;
+    }
+    .questions { margin-top: 12px; }
+    .question-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+      border-right: 4px solid #007b83;
+    }
+    .q-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    .q-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #007b83;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .q-meta { font-size: 11px; color: #666; }
+    .q-text-en {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .q-text-ar {
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 6px;
+    }
+    .option-btn {
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      background: #f9fafb;
+      text-align: right;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+    .option-btn.correct {
+      background: #d1f3d2;
+      border-color: #2e8b57;
+      color: #14532d;
+    }
+    .option-btn.incorrect {
+      background: #ffd6d6;
+      border-color: #d11a2a;
+      color: #7f1d1d;
+    }
+    .q-footer {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed #ddd;
+      font-size: 12px;
+      color: #333;
+    }
+    .q-footer strong { color: #007b83; }
+    .hidden { display: none; }
+    @media (max-width: 700px) {
+      .stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .options-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>First Aid Question Bank –  Zeyad</h1>
+    <p>Interactive First Aid & CPR Question Bank – English questions with Arabic explanations.</p>
+    <p>بنك أسئلة تفاعلي للإسعافات الأولية والإنعاش القلبي الرئوي.</p>
+  </header>
+
+  <section class="stats">
+    <div class="stat-box">
+      <div class="stat-label">إجمالي الأسئلة</div>
+      <div class="stat-value" id="stat-total">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">تمت الإجابة</div>
+      <div class="stat-value" id="stat-answered">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">الإجابات الصحيحة</div>
+      <div class="stat-value" id="stat-correct">0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">نسبة النجاح %</div>
+      <div class="stat-value" id="stat-percent">0%</div>
+    </div>
+  </section>
+
+  <section class="controls">
+    <div class="search-row">
+      <input type="text" id="searchInput"
+             placeholder="بحث في نص السؤال (إنجليزي/عربي) أو في الكاتيجوري (Bleeding, Burns, CPR…)">
+    </div>
+    <div class="filters">
+      <span class="filters-label">المجموعات:</span>
+      <div class="filters-group" id="partFilters">
+        <button class="btn active" data-part="ALL">الكل</button>
+        <button class="btn" data-part="Bleeding">Bleeding</button>
+        <button class="btn" data-part="Burns">Burns</button>
+        <button class="btn" data-part="Shock">Shock</button>
+        <button class="btn" data-part="CPR">CPR</button>
+      </div>
+      <span class="filters-label">الفئات:</span>
+      <div class="filters-group" id="categoryFilters">
+        <button class="btn active" data-category="ALL">الكل</button>
+        <button class="btn" data-category="Scene & Safety">Scene & Safety</button>
+        <button class="btn" data-category="Bleeding & Shock">Bleeding & Shock</button>
+        <button class="btn" data-category="Burns & Heat">Burns & Heat</button>
+        <button class="btn" data-category="CPR & AED">CPR & AED</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="questions" id="questionsContainer"></section>
+</div>
+
+<script>
+  // ===================== DATA =====================
+  const allQuestions = [
+    // 1) Electrical shock scene safety
+    {
+      id: 1,
+      part: "Scene",
+      category: "Scene & Safety",
+      en: "Your check of the scene suggests that a victim has suffered an electrical shock. The first thing to do is:",
+      ar: "أنت في مكان الحادث ويوجد مصاب بصدمة كهربائية، أول شيء يجب القيام به هو:",
+      options: [
+        "Cover all burns with a dry loose dressing.",
+        "Ask a bystander to help you move the victim.",
+        "Place the victim on one side with the head down.",
+        "Make sure the power is turned off."
+      ],
+      correct: 3,
+      explanation: "السلامة أولًا، يجب فصل مصدر الكهرباء قبل لمس المصاب أو تقديم أي إسعاف."
+    },
+    // 2) Vomiting, coughing blood after car accident
+    {
+      id: 2,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "A victim of a car accident has just vomited and now appears to be coughing up blood. He is breathing very quickly and his pulse is weak and fast. What is most likely wrong?",
+      ar: "مصاب في حادث سيارة تقيأ ثم بدأ يسعل دماً، يتنفس بسرعة ونبضه سريع وضعيف. ما الاحتمال الأكبر؟",
+      options: [
+        "He is having a seizure.",
+        "He has internal bleeding.",
+        "He is having a heart attack.",
+        "He is having a diabetic emergency."
+      ],
+      correct: 1,
+      explanation: "وجود دم مع القيء وسعال الدم مع نبض سريع وضعيف يشير بشدة إلى نزيف داخلي وصدمة."
+    },
+    // 3) Burned hand in cool water
+    {
+      id: 3,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "You are caring for a victim with a burned hand. Put the hand in cool water if:",
+      ar: "أنت تعتني بمصاب لديه حرق في اليد، متى تضع اليد في ماء بارد؟",
+      options: [
+        "The burns are very deep.",
+        "There are burns with open blisters.",
+        "The burns are minor with no open blisters.",
+        "You should put the hand in cool water for all of the above."
+      ],
+      correct: 2,
+      explanation: "التبريد بالماء البارد يكون في الحروق السطحية البسيطة بدون فقاعات مفتوحة حتى لا يزيد التلف."
+    },
+    // 4) Deep cut, pale & restless
+    {
+      id: 4,
+      part: "Shock",
+      category: "Bleeding & Shock",
+      en: "A victim has lost a lot of blood through a deep cut in his leg. He is breathing fast and seems pale and restless. He is probably:",
+      ar: "مصاب فقد كمية كبيرة من الدم من جرح عميق في الساق، يتنفس بسرعة وشاحب وقلق. غالبًا هو:",
+      options: [
+        "Having a stroke.",
+        "Having a heart attack.",
+        "In shock.",
+        "Choking."
+      ],
+      correct: 2,
+      explanation: "فقدان دم كثير مع تنفس سريع وشحوب واضطراب هي علامات كلاسيكية للصدمة (shock)."
+    },
+    // 5) Which burn victim to call EMS
+    {
+      id: 5,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "For which of the following burn victims should you immediately call your local emergency phone number?",
+      ar: "لأي من حالات الحروق الآتية يجب الاتصال فورًا برقم الطوارئ؟",
+      options: [
+        "A 40-year-old man who has burned his hand with hot coffee.",
+        "A 68-year-old woman who has a blistered grease burn on her hands and arms.",
+        "A 26-year-old woman who has a sunburn on her shoulders.",
+        "All of the above."
+      ],
+      correct: 1,
+      explanation: "حرق دهني مع فقاعات وبمساحة كبيرة في مريضة مسنة يُعتبر حرقًا خطيرًا يحتاج طوارئ."
+    },
+    // 6) Chemical in face
+    {
+      id: 6,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "A 15-year-old boy has just splashed a chemical on his face. After sending someone to call for an ambulance, you would:",
+      ar: "ولد عمره 15 سنة تناثر كيميائى على وجهه، بعد طلب الإسعاف ماذا تفعل؟",
+      options: [
+        "Cover the burned area.",
+        "Have the victim stay calm until ambulance arrives.",
+        "Flush the burned area with large amounts of water until the ambulance arrives.",
+        "Immediately drive the victim to the hospital."
+      ],
+      correct: 2,
+      explanation: "الحروق الكيميائية تُغسل فورًا بكمية كبيرة من الماء الجاري لتخفيف تركيز المادة."
+    },
+    // 7) Why cover burns
+    {
+      id: 7,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "Why should you cover burns with a clean or sterile dressing?",
+      ar: "لماذا نغطي منطقة الحروق بضمادة نظيفة أو معقمة؟",
+      options: [
+        "To prevent infection.",
+        "To cool burned area.",
+        "To keep the burned area warm.",
+        "Both a and c."
+      ],
+      correct: 3,
+      explanation: "التغطية النظيفة تقلل خطر العدوى وتحافظ على حرارة الجسم في منطقة الحرق."
+    },
+    // 8) Fallen victim at bottom of stairs
+    {
+      id: 8,
+      part: "Trauma",
+      category: "Scene & Safety",
+      en: "You find a person at the bottom of the stairs. He appears to have fallen and seems badly hurt. After sending someone for help, you would:",
+      ar: "وجدت شخصًا أسفل السلم يبدو أنه سقط وأصيب بشدة، بعد طلب المساعدة ماذا تفعل؟",
+      options: [
+        "Roll the victim onto his stomach keeping the head and back in a straight line.",
+        "Roll the victim onto one side.",
+        "Position victim onto one side.",
+        "Attempt to keep the victim from moving."
+      ],
+      correct: 3,
+      explanation: "مع احتمال إصابة العمود الفقري الأفضل تثبيت المصاب ومنع حركته حتى يأتي المختصون."
+    },
+    // 9) Glass sticking out of leg
+    {
+      id: 9,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "A victim has a large piece of glass sticking out of her leg. You should:",
+      ar: "مصابة يوجد في ساقها قطعة زجاج كبيرة مغروسة، ماذا تفعل؟",
+      options: [
+        "Leave the glass in her leg and control the bleeding.",
+        "Call your local emergency phone number.",
+        "Remove the glass and then control the bleeding.",
+        "Both a and b."
+      ],
+      correct: 3,
+      explanation: "لا تُزال الأجسام المغروسة؛ تُترك في مكانها وتُثبت مع التحكم في النزيف والاتصال بالطوارئ."
+    },
+    // 10) First concern at serious burn scene
+    {
+      id: 10,
+      part: "Scene",
+      category: "Scene & Safety",
+      en: "What should be your first concern at the scene where a person has been seriously burned?",
+      ar: "ما أول ما تهتم به في مكان يوجد به مصاب بحرق شديد؟",
+      options: [
+        "Checking the scene for safety.",
+        "Checking the victim's breathing and pulse.",
+        "Calling your local emergency phone number.",
+        "Cooling the burned area."
+      ],
+      correct: 0,
+      explanation: "يجب التأكد من أمان المكان (مثل إطفاء النار/الكهرباء) قبل الاقتراب من المصاب."
+    },
+
+        {
+      id: 11,
+      part: "Fracture & Sprain",
+      category: "Trauma",
+      en: "A woman has fallen and burned her ankle. She says she heard something snap. She looks pale and is sweating. What should you do?",
+      ar: "امرأة سقطت والتوت كاحلها وتقول إنها سمعت صوت (طقطقة)، شاحبة وتعرق. ماذا تفعل؟",
+      options: [
+        "Have the victim walk on the injured ankle.",
+        "Care for the injury as if it were serious.",
+        "Apply heat and elevate the injury.",
+        "Apply a dressing and loosely bandage."
+      ],
+      correct: 1,
+      explanation: "سماع صوت مع ألم وتورم قد يعني كسر أو التواء شديد؛ تُعامل كإصابة خطيرة وتُثبَّت ولا تُحمَّل وزن."
+    },
+    {
+      id: 12,
+      part: "Heat",
+      category: "Burns & Heat",
+      en: "Which of the following should be done for a person experiencing a heat related illness?",
+      ar: "أي مما يلي يجب فعله لشخص يعاني من مشكلة بسبب الحرارة؟",
+      options: [
+        "Keep the victim warm.",
+        "Force the victim to drink fluids.",
+        "Apply cool wet cloths.",
+        "Place the victim in warm water."
+      ],
+      correct: 2,
+      explanation: "يتم تبريد المصاب بكمّادات مبللة باردة ونقله لمكان ظليل، لا ندفئه ولا نُجبره على الشراب."
+    },
+    {
+      id: 13,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Which should be part of your care for a severely bleeding open wound?",
+      ar: "أي مما يلي يجب أن يكون جزءًا من التعامل مع جرح مفتوح ينزف بغزارة؟",
+      options: [
+        "Allow the wound to bleed in order to minimize infection.",
+        "Apply direct pressure and elevate the injured area (if no broken bones).",
+        "Use a tourniquet to stop all blood flow.",
+        "Both b and c."
+      ],
+      correct: 1,
+      explanation: "السيطرة الأساسية على النزيف تكون بالضغط المباشر ورفع العضو المصاب إذا لم يُشتبه في كسر."
+    },
+    {
+      id: 14,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "What should you do if you think a victim has serious internal bleeding?",
+      ar: "ماذا تفعل إذا شككت في وجود نزيف داخلي خطير؟",
+      options: [
+        "Apply heat to the injured area.",
+        "Call your local emergency phone number for help.",
+        "Place the victim in a sitting position.",
+        "Give fluids to replace blood loss."
+      ],
+      correct: 1,
+      explanation: "النزيف الداخلي حالة طارئة؛ يُطلب الإسعاف فورًا ويُحافظ على راحة المصاب دون إعطاء سوائل فموية."
+    },
+    {
+      id: 15,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Which is the first step when caring for bleeding wounds?",
+      ar: "ما هي أول خطوة عند التعامل مع الجروح النازفة؟",
+      options: [
+        "Apply direct pressure with a clean or sterile dressing.",
+        "Apply pressure at the pressure point.",
+        "Add bulky dressings to reinforce blood-soaked bandages.",
+        "Elevate the wound."
+      ],
+      correct: 0,
+      explanation: "أول ما يُعمل مع أي نزيف خارجي هو الضغط المباشر بضمادة نظيفة."
+    },
+    {
+      id: 16,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "How can you reduce the risk of disease transmission when caring for open, bleeding wounds?",
+      ar: "كيف تقلل خطر انتقال العدوى عند التعامل مع جروح مفتوحة نازفة؟",
+      options: [
+        "Wash your hands immediately after giving care.",
+        "Avoid direct contact with blood.",
+        "Use protective barriers such as gloves or plastic wrap.",
+        "All of the above."
+      ],
+      correct: 3,
+      explanation: "غسل الأيدي، وتجنب ملامسة الدم، واستخدام قفازات أو حاجز واقٍ كلها إجراءات مهمة للوقاية."
+    },
+    {
+      id: 17,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Dressings and bandages are used to:",
+      ar: "تُستخدم الضمادات والشاش من أجل:",
+      options: [
+        "Reduce the victim's pain.",
+        "Reduce internal bleeding.",
+        "Help control bleeding and prevent infection.",
+        "Make it easier to take the victim to the hospital."
+      ],
+      correct: 2,
+      explanation: "وظيفتها الأساسية هي تغطية الجرح للحد من النزيف ومنع التلوث."
+    },
+    {
+      id: 18,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "When giving care for external bleeding, what should you do first?",
+      ar: "عند التعامل مع نزيف خارجي، ما أول ما يجب فعله؟",
+      options: [
+        "Elevate the injury.",
+        "Apply direct pressure.",
+        "Apply a loose dressing.",
+        "Apply a tourniquet."
+      ],
+      correct: 1,
+      explanation: "الضغط المباشر هو أول خطوة أساسية للسيطرة على النزيف."
+    },
+    {
+      id: 19,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Bandages are used for:",
+      ar: "تُستخدم الأربطة (Bandages) من أجل:",
+      options: [
+        "Applying directly to a wound to soak up blood.",
+        "To hold dressings in place, apply pressure and control bleeding.",
+        "Ease pain.",
+        "Small cuts only."
+      ],
+      correct: 1,
+      explanation: "الشاش يغطي الجرح، والرباط يُثبت الشاش ويمارس ضغطًا للمساعدة في إيقاف النزيف."
+    },
+    {
+      id: 20,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Dressings and pads:",
+      ar: "الضمادات والكمّادات:",
+      options: [
+        "Should be removed when blood soaked. New ones should be applied.",
+        "Are used to help control bleeding and keep germs out.",
+        "Are not included in a first aid kit.",
+        "Should be applied to a sucking chest wound."
+      ],
+      correct: 1,
+      explanation: "وظيفتها التحكم في النزيف ومنع دخول الجراثيم إلى الجرح."
+    },
+    {
+      id: 21,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Which symptoms would indicate internal bleeding?",
+      ar: "أي الأعراض التالية تشير إلى نزيف داخلي؟",
+      options: [
+        "Rapid weak pulse, excessive thirst.",
+        "Skin that feels cool or moist, or looks pale or bluish.",
+        "Tender, swollen, bruised, or hard areas of the body such as the abdomen.",
+        "All of the above."
+      ],
+      correct: 3,
+      explanation: "كل هذه العلامات (نبض سريع وضعيف، عطش، شحوب، ألم وانتفاخ) تتوافق مع نزيف داخلي وصدمة."
+    },
+    {
+      id: 22,
+      part: "Shock",
+      category: "Bleeding & Shock",
+      en: "Which is not a symptom of shock?",
+      ar: "أي مما يلي ليس من أعراض الصدمة (Shock)؟",
+      options: [
+        "Strong thirst, nausea, or vomiting.",
+        "Abdominal colic.",
+        "Restless or irritability.",
+        "Rapid breathing or rapid pulse."
+      ],
+      correct: 1,
+      explanation: "آلام البطن المغصية ليست من العلامات النموذجية للصدمة مقارنة بباقي الاختيارات."
+    },
+    {
+      id: 23,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "A first-degree burn:",
+      ar: "الحرق من الدرجة الأولى:",
+      options: [
+        "Involves only the top layer of skin.",
+        "Is red and blistered.",
+        "Destroys all layers of skin.",
+        "Is the most serious of burns."
+      ],
+      correct: 0,
+      explanation: "الحروق من الدرجة الأولى سطحية تصيب البشرة فقط وتكون حمراء بدون فقاعات."
+    },
+    {
+      id: 24,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "When caring for someone who has suffered an electrical burn, you would not:",
+      ar: "عند التعامل مع شخص لديه حرق كهربائي، أي مما يلي لا تفعله؟",
+      options: [
+        "Check breathing and pulse.",
+        "Check for possible fractures.",
+        "Cool the burned area.",
+        "Treat for shock."
+      ],
+      correct: 2,
+      explanation: "تبريد الحرق ليس الأولوية في الحروق الكهربائية؛ الأهم تقييم التنفس والنبض والكسور والصدمة."
+    },
+    {
+      id: 25,
+      part: "Heat",
+      category: "Burns & Heat",
+      en: "When caring for a student who is suffering from heat cramps:",
+      ar: "عند التعامل مع طالب يعاني من تقلصات عضلية بسبب الحرارة:",
+      options: [
+        "Apply cold packs.",
+        "Give cool water or sports drink.",
+        "Have student keep walking slowly to work the cramp out.",
+        "Massage the muscle vigorously to increase circulation."
+      ],
+      correct: 1,
+      explanation: "تقلصات الحرارة تُعالج بالراحة وشرب سوائل باردة أو مشروبات رياضية لتعويض الأملاح."
+    },
+    {
+      id: 26,
+      part: "Heat",
+      category: "Burns & Heat",
+      en: "What symptoms are associated with heat exhaustion?",
+      ar: "أي الأعراض التالية مرتبطة بإجهاد الحرارة (Heat exhaustion)؟",
+      options: [
+        "Cool, moist, pale, or flushed skin.",
+        "Rapid weak pulse.",
+        "Rapid, shallow breathing.",
+        "All of the above."
+      ],
+      correct: 3,
+      explanation: "كل هذه العلامات نموذجية لإجهاد الحرارة وتسبق غالبًا ضربة الشمس."
+    },
+    {
+      id: 27,
+      part: "Heat",
+      category: "Burns & Heat",
+      en: "Heat stroke:",
+      ar: "ضربة الشمس (Heat stroke):",
+      options: [
+        "Causes very high body temperature.",
+        "Hot red or dry skin.",
+        "Rapid weak pulse, shallow breathing.",
+        "All of the above."
+      ],
+      correct: 3,
+      explanation: "ضربة الشمس حالة طارئة تتميز بارتفاع شديد في الحرارة مع جلد حار وجفاف واضطراب في الوظائف الحيوية."
+    },
+    {
+      id: 28,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "What would you do for a victim who has internal bleeding?",
+      ar: "ماذا تفعل لمصاب لديه نزيف داخلي؟",
+      options: [
+        "Keep the victim quiet and lying down.",
+        "Bend knees to make them comfortable.",
+        "Both a and b.",
+        "None of the above."
+      ],
+      correct: 2,
+      explanation: "يُستلقى المصاب في راحة مع ثني الركبتين إن كان مريحًا ويُمنع من الحركة ويُستدعى الإسعاف."
+    },
+    {
+      id: 29,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Internal bleeding can be caused by:",
+      ar: "يمكن أن يحدث النزيف الداخلي بسبب:",
+      options: [
+        "Injury.",
+        "Illness.",
+        "Medication.",
+        "All of the above."
+      ],
+      correct: 3,
+      explanation: "الرضوض القوية وبعض الأمراض والأدوية (مثل مميعات الدم) قد تؤدي كلها إلى نزيف داخلي."
+    },
+    {
+      id: 30,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "What do you do for a chemical burn?",
+      ar: "ماذا تفعل في حالة حرق كيميائي؟",
+      options: [
+        "Flush with water, dry, and cover.",
+        "Flush with large amounts of water and cover.",
+        "Flush with large amounts of warm water until help arrives.",
+        "Flush with large amounts of cool water until help arrives."
+      ],
+      correct: 3,
+      explanation: "الحروق الكيميائية تُغسل بماء جارٍ بارد بكميات كبيرة حتى وصول المساعدة، مع تغطية لاحقة."
+    },
+
+
+    {
+      id: 31,
+      part: "Heat",
+      category: "Burns & Heat",
+      en: "What is more serious?",
+      ar: "أي من حالات الحرارة التالية أكثر خطورة؟",
+      options: [
+        "Heat Stroke",
+        "Heat Exhaustion",
+        "Heat Cramps",
+        "Heat Rash"
+      ],
+      correct: 0,
+      explanation: "ضربة الشمس هي أخطر أشكال أمراض الحرارة وتُعد طارئة مهددة للحياة."
+    },
+    {
+      id: 32,
+      part: "Shock",
+      category: "Bleeding & Shock",
+      en: "Shock is a condition where:",
+      ar: "الصدمة (Shock) هي حالة يحدث فيها:",
+      options: [
+        "The respiratory system fails to deliver air to the lungs.",
+        "The cardiovascular system fails to deliver blood to the heart.",
+        "The circulatory system fails to deliver blood to all parts of the body.",
+        "All of the above."
+      ],
+      correct: 2,
+      explanation: "تعريف الصدمة هو فشل الجهاز الدوري في توصيل الدم والأكسجين الكافي لجميع أنسجة الجسم."
+    },
+    {
+      id: 33,
+      part: "Splints",
+      category: "Trauma",
+      en: "In general, a splint should be:",
+      ar: "بوجه عام، الجبيرة (Splint) يجب أن تكون:",
+      options: [
+        "Loose, so that the victim can still move the injured limb.",
+        "Not so tight that it slows circulation.",
+        "Tied with cravats over the injured area.",
+        "None of the above."
+      ],
+      correct: 1,
+      explanation: "الجبيرة يجب أن تثبت الطرف بدون أن تضغط لدرجة تمنع الدورة الدموية."
+    },
+    {
+      id: 34,
+      part: "Splints",
+      category: "Trauma",
+      en: "Splint an injury to a muscle, bone, or joint only when:",
+      ar: "تجبير إصابة في عضلة أو عظم أو مفصل يكون فقط عندما:",
+      options: [
+        "You have to move or transport the victim.",
+        "You can do so without hurting the victim.",
+        "You have splinting materials available.",
+        "Both a and b."
+      ],
+      correct: 3,
+      explanation: "يُفضل التجبير عندما تحتاج لنقل المصاب ويمكنك عمل الجبيرة دون زيادة الألم أو الضرر."
+    },
+    {
+      id: 35,
+      part: "Soft Tissue",
+      category: "Bleeding & Shock",
+      en: "A wound where there is damage to the soft tissue and blood vessels under the skin is called:",
+      ar: "الجرح الذي يحدث فيه تلف للأنسجة الرخوة والأوعية تحت الجلد يُسمى:",
+      options: [
+        "A scrape.",
+        "A cut.",
+        "A bruise.",
+        "An avulsion."
+      ],
+      correct: 2,
+      explanation: "الكدمة (Bruise) تعني نزيفًا تحت الجلد مع تلف في الأنسجة الرخوة دون قطع الجلد."
+    },
+    {
+      id: 36,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "When caring for a victim with a bloody nose you would not:",
+      ar: "عند التعامل مع مصاب بنزيف من الأنف، أي مما يلي لا تفعله؟",
+      options: [
+        "Apply an ice pack to the bridge of the nose.",
+        "Apply pressure to upper lip just beneath nose.",
+        "Have the victim sit with head tilted slightly backward while pinching the nostrils together.",
+        "Have the victim sit with head tilted slightly forward while pinching the nostrils together."
+      ],
+      correct: 2,
+      explanation: "إمالة الرأس للخلف تزيد خطر بلع الدم أو دخوله للجهاز التنفسي؛ الصحيح إمالته للأمام."
+    },
+    {
+      id: 37,
+      part: "Soft Tissue",
+      category: "Bleeding & Shock",
+      en: "Wounds that would require stitches are:",
+      ar: "أي الجروح التالية غالبًا تحتاج خياطة (غرز)؟",
+      options: [
+        "Over an inch long.",
+        "Operation wound.",
+        "Bleeding from an artery or uncontrolled bleeding.",
+        "All of the above."
+      ],
+      correct: 3,
+      explanation: "الجروح الكبيرة أو الجراحية أو التي لا يمكن إيقاف نزيفها غالبًا تحتاج خياطة طبية."
+    },
+    {
+      id: 38,
+      part: "Cold",
+      category: "Burns & Heat",
+      en: "Hypothermia:",
+      ar: "انخفاض حرارة الجسم (Hypothermia):",
+      options: [
+        "Is not life threatening.",
+        "Victims must be heated up as fast as possible.",
+        "Is caused by exposure to temperatures below freezing.",
+        "Can be caused by swimming in waters below 70 degrees."
+      ],
+      correct: 3,
+      explanation: "يمكن أن يحدث انخفاض الحرارة حتى في ماء أبرد من حرارة الجسم بكثير، وليس فقط تحت الصفر."
+    },
+    {
+      id: 39,
+      part: "Soft Tissue",
+      category: "Bleeding & Shock",
+      en: "Soft tissue wounds should be cared for by:",
+      ar: "يُتعامل مع إصابات الأنسجة الرخوة بواسطة:",
+      options: [
+        "Heat and elastic bandages.",
+        "Ice and elevation.",
+        "Apply direct pressure on the area to cut down on bleeding under skin.",
+        "Both b and c."
+      ],
+      correct: 3,
+      explanation: "الثلج ورفع الطرف والضغط الخفيف يقلل التورم والنزيف تحت الجلد."
+    },
+    {
+      id: 40,
+      part: "Trauma",
+      category: "Trauma",
+      en: "A boy is shot with an arrow through the chest and out the back, what would be the best course of action?",
+      ar: "ولد طُعن بسهم عبر الصدر وخرج من الظهر، ما أفضل تصرف؟",
+      options: [
+        "Remove the arrow and apply sterile gauze to the wound.",
+        "Do not remove the arrow, place several dressings around the arrow to keep it from moving, bandage the dressings in place around the arrow.",
+        "Do not remove the arrow; break off the part out the back, bandage with dressing around the arrow to hold it in place.",
+        "Remove the arrow, wash the area, and bandage with sterile gauze."
+      ],
+      correct: 1,
+      explanation: "لا يُزال الجسم المخترِق؛ يُثبَّت في مكانه لمنع زيادة النزيف حتى يتعامل معه الجراح."
+    },
+    {
+      id: 41,
+      part: "Eye",
+      category: "Trauma",
+      en: "A boy has a sliver in his eye, you should:",
+      ar: "ولد لديه شظية صغيرة في عينه، ماذا تفعل؟",
+      options: [
+        "Attempt to remove the splinter with tweezers.",
+        "Flush the eye with cool water or milk.",
+        "Leave the sliver in, call for help.",
+        "Wrap sterile gauze around the head covering both eyes."
+      ],
+      correct: 2,
+      explanation: "لا تحاول إزالة جسم مغروس في العين؛ اتركه واطلب إسعافًا متخصصًا."
+    },
+    {
+      id: 42,
+      part: "Cold",
+      category: "Burns & Heat",
+      en: "A boy with frostbite on his feet, what should you do?",
+      ar: "ولد لديه قضمة صقيع في قدميه، ماذا تفعل؟",
+      options: [
+        "Rub his feet vigorously until feeling and color return.",
+        "Apply hot moist towels to feet and massage gently.",
+        "Soak feet in warm water, bandage with dry sterile dressing.",
+        "Soak feet in warm water not more than 90 degrees; rub feet gently until feeling and color return, then wrap with sterile dressing."
+      ],
+      correct: 3,
+      explanation: "يُستخدم ماء دافئ (غير ساخن) مع تدليك لطيف ثم تغطية جافة؛ الفرك العنيف يسبب تلفًا أكبر للأنسجة."
+    },
+    {
+      id: 43,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "What do you do for a victim who has a bleeding injury to the mouth and you are sure that there is no head, neck, or spine injury?",
+      ar: "مصاب لديه نزيف في الفم وتأكدت أنه لا توجد إصابة في الرأس أو الرقبة أو العمود الفقري، ماذا تفعل؟",
+      options: [
+        "Keep victim seated with head tilted slightly forward.",
+        "Keep victim seated with head tilted slightly backward.",
+        "Have the victim lie down on their side.",
+        "Either a or c."
+      ],
+      correct: 3,
+      explanation: "إمالة الرأس قليلاً للأمام أو وضعه على جانبِه يمنع دخول الدم إلى مجرى التنفس."
+    },
+    {
+      id: 44,
+      part: "Fracture & Sprain",
+      category: "Trauma",
+      en: "What is an open fracture?",
+      ar: "ما هو الكسر المفتوح؟",
+      options: [
+        "A fracture in which the bone ends can move around.",
+        "A fracture in which the bone is exposed as the skin is broken.",
+        "A fracture which causes complications such as a punctured lung.",
+        "A fracture in which the bone has bent and split."
+      ],
+      correct: 1,
+      explanation: "الكسر المفتوح يعني وجود كسر مع جرح في الجلد يجعل العظم ظاهرًا أو متصلاً بالهواء الخارجي."
+    },
+    {
+      id: 45,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Which medical condition will develop from severe blood loss?",
+      ar: "أي حالة طبية قد تحدث نتيجة فقدان دم شديد؟",
+      options: [
+        "Shock.",
+        "Hypoglycemia.",
+        "Anaphylaxis.",
+        "Hypothermia."
+      ],
+      correct: 0,
+      explanation: "فقدان الدم بكثرة يؤدي إلى صدمة دورانية لعدم كفاية حجم الدم."
+    },
+    {
+      id: 46,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "What names are given to the three different depths of burns?",
+      ar: "ما أسماء درجات عمق الحروق الثلاثة؟",
+      options: [
+        "Small, medium and large.",
+        "First, second and third degree.",
+        "Minor, medium and severe.",
+        "Superficial, partial thickness, full thickness."
+      ],
+      correct: 3,
+      explanation: "التسمية الطبية تعتمد على عمق الحرق: سطحي، وسماكة جزئية، وسماكة كاملة."
+    },
+    {
+      id: 47,
+      part: "Splints",
+      category: "Trauma",
+      en: "The purpose of placing an injured arm in a sling is to allow the arm to:",
+      ar: "الغرض من وضع ذراع مصابة في حمّالة (Sling) هو أن تسمح للذراع أن:",
+      options: [
+        "Heal.",
+        "Strengthen.",
+        "Rest.",
+        "Swell."
+      ],
+      correct: 2,
+      explanation: "الحمّالة تثبت الذراع وتريحها لتقليل الألم ومنع مزيد من الضرر."
+    },
+    {
+      id: 48,
+      part: "Fracture & Sprain",
+      category: "Trauma",
+      en: "Which of the following is NOT a benefit of placing ice on a fracture?",
+      ar: "أي مما يلي ليس من فوائد وضع الثلج على موضع الكسر؟",
+      options: [
+        "Decreased healing.",
+        "Reduced pain.",
+        "Decreased swelling.",
+        "Reduced bleeding."
+      ],
+      correct: 0,
+      explanation: "الثلج يقلل الألم والتورم والنزيف الموضعي لكنه لا يبطئ الالتئام، بل يساعد على راحة أفضل."
+    },
+    {
+      id: 49,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "A person, who is unconscious, not breathing, has no pulse, needs:",
+      ar: "شخص فاقد الوعي لا يتنفس ولا يوجد نبض يحتاج إلى:",
+      options: [
+        "CPR.",
+        "Abdominal thrust maneuver.",
+        "Rescue breathing.",
+        "Back blows and chest thrusts."
+      ],
+      correct: 0,
+      explanation: "توقف التنفس والنبض يعني توقف القلب؛ الإجراء الأساسي هو الإنعاش القلبي الرئوي (CPR)."
+    },
+    {
+      id: 50,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "A victim of a car accident has just vomited and now appears to be coughing up blood. He is breathing very quickly, and his pulse is weak and fast. What is most likely wrong?",
+      ar: "مصاب في حادث سيارة تقيأ ثم بدأ يسعل دماً ويتنفس بسرعة مع نبض سريع وضعيف. ما الاحتمال الأكبر؟",
+      options: [
+        "He is having a seizure.",
+        "He has internal bleeding.",
+        "He is having a heart attack.",
+        "He is having a diabetic emergency."
+      ],
+      correct: 1,
+      explanation: "هذه الصورة وصفية لنزيف داخلي حاد مع صدمة دورانية."
+    },
+
+        {
+      id: 51,
+      part: "Shock",
+      category: "Bleeding & Shock",
+      en: "A victim has lost a lot of blood through a deep cut in his leg. He is breathing fast and seems pale and restless. He is probably:",
+      ar: "مصاب فقد كمية كبيرة من الدم من جرح عميق في الساق، يتنفس بسرعة وشاحب وقلق. غالبًا هو:",
+      options: [
+        "Having a stroke.",
+        "Having a heart attack.",
+        "In shock.",
+        "Choking."
+      ],
+      correct: 2,
+      explanation: "فقدان الدم مع سرعة التنفس والشحوب وعدم الارتياح يشير إلى صدمة دورانية."
+    },
+    {
+      id: 52,
+      part: "Heart",
+      category: "CPR & AED",
+      en: "Which is not a symptom of heart attack?",
+      ar: "أي مما يلي ليس من أعراض الجلطة القلبية (Heart attack)؟",
+      options: [
+        "Chest pain.",
+        "Red, hot, or dry skin.",
+        "Pale or bluish in color.",
+        "Profuse sweating."
+      ],
+      correct: 1,
+      explanation: "سخونة وجفاف الجلد ترتبط أكثر بضربة الشمس، وليست علامة نموذجية للجلطة القلبية."
+    },
+    {
+      id: 53,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "When performing adult CPR, you give:",
+      ar: "عند عمل إنعاش قلبي رئوي لشخص بالغ، الإيقاع يكون:",
+      options: [
+        "2 slow breaths and 30 chest compressions.",
+        "1 slow breath and 10 chest compressions.",
+        "5 slow breaths and 10 chest compressions.",
+        "3 slow breaths and 15 chest compressions."
+      ],
+      correct: 0,
+      explanation: "البروتوكول الحالي: 30 ضغطة صدرية يتبعها نَفَسان إنقاذيان للبالغ."
+    },
+    {
+      id: 54,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "When performing CPR on a child you give:",
+      ar: "عند عمل CPR لطفل، ما النمط الصحيح؟",
+      options: [
+        "4 slow breaths and 20 chest compressions.",
+        "1 slow breath and 5 chest compressions.",
+        "2 slow breaths and 30 chest compressions.",
+        "2 slow breaths and 15 chest compressions."
+      ],
+      correct: 2,
+      explanation: "يُستخدم أيضًا نمط 30 ضغطة إلى نَفَسين لمعظم الأعمار في الإرشادات الحديثة."
+    },
+    {
+      id: 55,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "When caring for a choking infant, what position is the infant held in?",
+      ar: "كيف يُمسَك الرضيع عند التعامل مع انسداد مجرى الهواء (شرقة)؟",
+      options: [
+        "Upside down by the ankles and shoulders.",
+        "Face up on a flat surface.",
+        "Face down on your forearm with head lower than the body.",
+        "Face down on your knee, with head lower than the body."
+      ],
+      correct: 2,
+      explanation: "الطفل يُوضع على الساعد ووجهه لأسفل ورأسه منخفض قليلًا لإعطاء ضربات ظهر فعالة."
+    },
+    {
+      id: 56,
+      part: "Legal",
+      category: "Scene & Safety",
+      en: "You have a person who is conscious, and refuses help, now become unconscious state, what should you do?",
+      ar: "شخص كان واعيًا ورفض المساعدة ثم أصبح فاقد الوعي، ماذا تفعل؟",
+      options: [
+        "Permission is 'Implied' if the victim is unconscious.",
+        "Start CPR.",
+        "Call 123 and wait until professional help arrives.",
+        "Head tilt chin left."
+      ],
+      correct: 0,
+      explanation: "عندما يفقد الشخص وعيه يصبح الإذن ضمنيًا ويُسمح لك بتقديم الإسعاف."
+    },
+    {
+      id: 57,
+      part: "Heart",
+      category: "CPR & AED",
+      en: "A man is having a heart attack, he has medication with him, what should you do?",
+      ar: "رجل يعاني من أزمة قلبية وبحوزته دواء (مثل النيتروغلسرين)، ماذا تفعل؟",
+      options: [
+        "Give the medicine to him placing it under the tongue, Call 123.",
+        "Assist him with the medicine, call 123, and reassure him until help arrives.",
+        "Call 123, place medicine in mouth and begin CPR.",
+        "Have the victim lay down, Call 123."
+      ],
+      correct: 1,
+      explanation: "تساعده في تناول دوائه الموصوف وتستدعي الإسعاف وتطمئنه حتى وصول المساعدة."
+    },
+    {
+      id: 58,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "A girl is not breathing but has a pulse, what would be the best course of action?",
+      ar: "فتاة لا تتنفس لكن لديها نبض، ما أفضل إجراء؟",
+      options: [
+        "Call 123 and begin CPR immediately.",
+        "Call 123 and begin rescue breathing.",
+        "Call 123, check for blocked airway, begin CPR.",
+        "Call 123, and wait for professional medical help to arrive."
+      ],
+      correct: 1,
+      explanation: "وجود نبض مع غياب التنفس يحتاج تنفس إنقاذي وليس ضغطات صدرية."
+    },
+    {
+      id: 59,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "Where would you check the pulse on a 12-year-old boy?",
+      ar: "أين تفحص النبض لطفل عمره 12 سنة؟",
+      options: [
+        "On the inside of the arm between the elbow and shoulder.",
+        "At the side of the neck.",
+        "On the inside of the wrist.",
+        "At the foot dorsalis pedis artery."
+      ],
+      correct: 1,
+      explanation: "للأطفال الأكبر، يُفحص النبض غالبًا في الشريان السباتي على جانب الرقبة."
+    },
+    {
+      id: 60,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "The goal of CPR is to oxygenate blood to vital organs like the _____ and _____.",
+      ar: "هدف الإنعاش القلبي الرئوي هو إيصال دم مؤكسج إلى الأعضاء الحيوية مثل _____ و _____.",
+      options: [
+        "Spleen, pancreas.",
+        "Stomach, kidney.",
+        "Heart, brain.",
+        "Foot and hand."
+      ],
+      correct: 2,
+      explanation: "الأعضاء الأهم التي يجب حمايتها هي القلب والمخ."
+    },
+    {
+      id: 61,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "When performing CPR on an adult, how deep should the chest compressions be?",
+      ar: "ما عمق الضغطات الصدرية في CPR للبالغ؟",
+      options: [
+        "1–2 cm.",
+        "3–4 cm.",
+        "2–3 cm.",
+        "5–6 cm."
+      ],
+      correct: 3,
+      explanation: "في البالغين يجب أن يكون عمق الضغطات حوالي 5–6 سم لضخ الدم بشكل فعّال."
+    },
+    {
+      id: 62,
+      part: "Scene",
+      category: "Scene & Safety",
+      en: "A first aid responder should move a victim when:",
+      ar: "متى يُنقل المصاب من مكانه؟",
+      options: [
+        "We should move any victim at any time.",
+        "The victim is in a dangerous position.",
+        "Never move a victim.",
+        "Both a & b."
+      ],
+      correct: 1,
+      explanation: "لا يُنقل المصاب إلا إذا كان في خطر (حريق، انهيار، كهرباء...) مع الحرص على سلامة العمود الفقري."
+    },
+    {
+      id: 63,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "An eight-year-old child is unconscious, and the airway is blocked. You should:",
+      ar: "طفل عمره 8 سنوات فاقد الوعي ومجرى الهواء مسدود، ماذا تفعل؟",
+      options: [
+        "Give abdominal thrusts.",
+        "Begin CPR.",
+        "Begin blind search in victim mouth.",
+        "All of the above."
+      ],
+      correct: 1,
+      explanation: "في شخص غير واعٍ مع انسداد، يُبدأ CPR؛ الضغطات قد تساعد في طرد الجسم الغريب."
+    },
+    {
+      id: 64,
+      part: "Breathing",
+      category: "CPR & AED",
+      en: "Exhaled air contains about ______ percent oxygen.",
+      ar: "الهواء الزفير يحتوي تقريبًا على كم نسبة من الأكسجين؟",
+      options: [
+        "13%.",
+        "16%.",
+        "21%.",
+        "24%."
+      ],
+      correct: 1,
+      explanation: "الهواء الذي نزفره ما زال يحتوي على حوالي 16٪ أكسجين، لذلك يفيد في التنفس الإنقاذي."
+    },
+    {
+      id: 65,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "Which symptoms would indicate internal bleeding?",
+      ar: "أي الأعراض التالية تشير إلى نزيف داخلي؟",
+      options: [
+        "Rapid weak pulse, excessive thirst.",
+        "Skin that feels cool or moist or looks pale or bluish.",
+        "Tender, swollen, bruised, or hard areas of his body, such as the abdomen.",
+        "All of the above."
+      ],
+      correct: 3,
+      explanation: "كل هذه العلامات متوافقة مع نزيف داخلي وتستدعي طوارئ."
+    },
+    {
+      id: 66,
+      part: "Stroke",
+      category: "Bleeding & Shock",
+      en: "A stroke consists of which following signs?",
+      ar: "أي من العلامات التالية تُشير إلى سكتة دماغية (Stroke)؟",
+      options: [
+        "Chest pain.",
+        "Sweaty.",
+        "Weakness.",
+        "Nausea."
+      ],
+      correct: 2,
+      explanation: "الضعف المفاجئ في أحد الأطراف أو جانب الجسم من العلامات النموذجية للسكتة."
+    },
+    {
+      id: 67,
+      part: "Stroke",
+      category: "Bleeding & Shock",
+      en: "Which of the following can cause a stroke?",
+      ar: "أي مما يلي يمكن أن يسبب سكتة دماغية؟",
+      options: [
+        "A blood clot in an artery in the brain.",
+        "A blood clot in an artery in the heart.",
+        "A blood clot in an artery in the leg.",
+        "A blood clot in an artery in the lungs."
+      ],
+      correct: 0,
+      explanation: "انسداد شريان في المخ بجلطة يؤدي إلى سكتة دماغية."
+    },
+    {
+      id: 68,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "The recommended rate of compression for an adult is:",
+      ar: "معدل الضغطات الصدرية الموصى به للبالغ في CPR هو:",
+      options: [
+        "80–100 per minute.",
+        "100–120 per minute.",
+        "120–140 per minute.",
+        "140–160 per minute."
+      ],
+      correct: 1,
+      explanation: "التوصيات الحديثة توصي بمعدل 100–120 ضغطة في الدقيقة."
+    },
+    {
+      id: 69,
+      part: "Bleeding",
+      category: "Bleeding & Shock",
+      en: "What would you do for a victim who has internal bleeding?",
+      ar: "ماذا تفعل لمصاب لديه نزيف داخلي؟",
+      options: [
+        "Keep the victim quiet and lying down.",
+        "Bend knees to make them comfortable.",
+        "Both a and b.",
+        "None of the above."
+      ],
+      correct: 2,
+      explanation: "يُبقى المصاب مستلقيًا بهدوء مع ثني الركبتين إن كان ذلك مريحًا، حتى وصول الإسعاف."
+    },
+    {
+      id: 70,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "You are a lone first aider and have an unconscious non-breathing adult, what should you do first?",
+      ar: "أنت المسعف الوحيد ومعك بالغ فاقد الوعي لا يتنفس، ما أول ما تفعل؟",
+      options: [
+        "Start CPR with 30 chest compressions.",
+        "Give five initial rescue breaths.",
+        "Call 123 requesting AED (defibrillator) and ambulance.",
+        "Give two initial rescue breaths."
+      ],
+      correct: 0,
+      explanation: "طبقًا لإرشادات كثيرة، بعد طلب المساعدة سريعًا، تبدأ مباشرة بضغطات الصدر 30 ضغطه."
+    },
+
+        {
+      id: 71,
+      part: "Heart",
+      category: "CPR & AED",
+      en: "The first leading cause of death worldwide is:",
+      ar: "ما هو السبب الأول للوفاة عالميًا؟",
+      options: [
+        "Heat Stroke.",
+        "Heat Exhaustion.",
+        "Acute ischemic stroke.",
+        "Acute coronary syndrome (heart attack)."
+      ],
+      correct: 3,
+      explanation: "أمراض القلب التاجية والجلطات القلبية من أهم أسباب الوفاة عالميًا."
+    },
+    {
+      id: 72,
+      part: "Stroke",
+      category: "Bleeding & Shock",
+      en: "Symptoms of a stroke can be:",
+      ar: "أي من التالي يمكن أن يكون من أعراض السكتة الدماغية؟",
+      options: [
+        "Poisoning, burns, and/or blood loss.",
+        "Droopy face, arm, and/or speech.",
+        "Lack of oxygen, wheezing, and/or sweating.",
+        "Shoulder pain."
+      ],
+      correct: 1,
+      explanation: "ترهل جانب من الوجه أو ضعف الذراع أو اضطراب الكلام علامات كلاسيكية للسكتة."
+    },
+    {
+      id: 73,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "You should ask the patient if he/she is okay before performing CPR.",
+      ar: "يجب أن تسأل المريض إن كان بخير قبل البدء في CPR.",
+      options: [
+        "True",
+        "False",
+        "None 1",
+        "None 2"
+      ],
+      correct: 0,
+      explanation: "جزء من التقييم الأولي هو محاولة إيقاظ المصاب ونداؤه قبل بدء الإنعاش."
+    },
+    {
+      id: 74,
+      part: "Breathing",
+      category: "CPR & AED",
+      en: "How long should you check for breathing with unconscious victim?",
+      ar: "كم من الوقت تفحص التنفس عند مصاب فاقد الوعي؟",
+      options: [
+        "Do not check for breathing, continue chest compressions.",
+        "Not more than 2 seconds.",
+        "Not more than 5 seconds.",
+        "Not more than 10 seconds."
+      ],
+      correct: 3,
+      explanation: "فحص التنفس لا يجب أن يستغرق أكثر من 10 ثوانٍ حتى لا يتأخر بدء الإنعاش."
+    },
+    {
+      id: 75,
+      part: "Breathing",
+      category: "CPR & AED",
+      en: "When you try to give an unresponsive adult a rescue breath and the chest does not appear to rise, what would you do next?",
+      ar: "أثناء إعطاء نَفَس إنقاذي لبالغ غير مستجيب ولم يرتفع الصدر، ماذا تفعل؟",
+      options: [
+        "Perform abdominal thrusts.",
+        "Begin CPR.",
+        "Go call 123.",
+        "Repeat the head tilt/chin lift maneuver and attempt the breath again."
+      ],
+      correct: 3,
+      explanation: "قد يكون مجرى الهواء غير مفتوح بشكل كافٍ؛ يُعاد إمالة الرأس ورفع الذقن ثم إعادة محاولة النفَس."
+    },
+    {
+      id: 76,
+      part: "Airway",
+      category: "CPR & AED",
+      en: "A six-month-old child is gagging, turning blue, and unable to breathe or cry. What would you do first?",
+      ar: "رضيع عمره 6 شهور يختنق، شفاهه تميل للزرقة ولا يستطيع البكاء أو التنفس، ما أول إجراء؟",
+      options: [
+        "Begin CPR.",
+        "Attempt rescue breaths then compressions.",
+        "Deliver back blows and chest thrusts.",
+        "Blind finger sweep."
+      ],
+      correct: 2,
+      explanation: "في انسداد تام للهواء عند الرضيع يُستخدم التسلسل: ضربات ظهر ثم ضغطات صدرية خاصة بالرضع."
+    },
+    {
+      id: 77,
+      part: "AED",
+      category: "CPR & AED",
+      en: "You are performing single-person CPR and the AED advises a shock. What is your next step?",
+      ar: "أثناء عمل CPR بمفردك وجهاز الصدمات (AED) أوصى بإعطاء صدمة، ما الخطوة التالية؟",
+      options: [
+        "Call help.",
+        "Resume CPR.",
+        "Check for pulse.",
+        "Resume ventilation."
+      ],
+      correct: 1,
+      explanation: "بعد توصيل وإعطاء الصدمة تُستأنف ضغطات الصدر فورًا دون تأخير لفحص النبض."
+    },
+    {
+      id: 78,
+      part: "Recovery",
+      category: "Scene & Safety",
+      en: "Placing an unconscious, breathing victim in the recovery position is important to maintain an open airway and to minimize the potential of blood and vomit to cause obstruction.",
+      ar: "وضع المصاب فاقد الوعي الذي يتنفس في وضع الإفاقة يساعد على إبقاء مجرى الهواء مفتوحًا ومنع انسداده بالقيء أو الدم.",
+      options: [
+        "True",
+        "False",
+        "None 1",
+        "None 2"
+      ],
+      correct: 0,
+      explanation: "وضع الإفاقة يوجه الفم للأسفل ويمنع ارتجاع السوائل لمجرى التنفس."
+    },
+    {
+      id: 79,
+      part: "Faint",
+      category: "Bleeding & Shock",
+      en: "What is a faint?",
+      ar: "ما هو الإغماء (Faint)؟",
+      options: [
+        "A response to fear.",
+        "A cardiac arrest patient.",
+        "A brief loss of consciousness.",
+        "A sign of flu."
+      ],
+      correct: 2,
+      explanation: "الإغماء هو فقدان قصير ومؤقت للوعي غالبًا بسبب نقص دم بسيط للمخ."
+    },
+    {
+      id: 80,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "The complete medical terminology for CPR is:",
+      ar: "الاسم الطبي الكامل لاختصار CPR هو:",
+      options: [
+        "Cardiac pulse restart.",
+        "Cardiopulmonary resuscitation.",
+        "Complex pulmonary radiation.",
+        "Cardiac pulmonary rebound."
+      ],
+      correct: 1,
+      explanation: "CPR تعني الإنعاش القلبي الرئوي (Cardio‑Pulmonary Resuscitation)."
+    },
+    {
+      id: 81,
+      part: "Head Injury",
+      category: "Trauma",
+      en: "What is the medical term for a short-lived loss of brain function after head trauma?",
+      ar: "ما المصطلح الطبي لفقدان مؤقت لوظائف المخ بعد إصابة بالرأس؟",
+      options: [
+        "Amnesia.",
+        "Concussion.",
+        "Atrophy.",
+        "Vertigo."
+      ],
+      correct: 1,
+      explanation: "الارتجاج (Concussion) هو فقدان مؤقت لوظيفة المخ بعد ضربة بالرأس."
+    },
+    {
+      id: 82,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "While performing CPR on an infant, another rescuer appears on the scene, what do you do next?",
+      ar: "أثناء عمل CPR لرضيع ظهر منقذ ثانٍ، ماذا تفعل؟",
+      options: [
+        "Immediately transport the patient.",
+        "Wait until exhausted then switch.",
+        "Second rescuer help with CPR.",
+        "Have second rescuer begin ventilation ratio 30:2."
+      ],
+      correct: 2,
+      explanation: "وجود منقذ ثانٍ يسمح بتبادل الأدوار وتقسيم الضغطات والتنفس لتحسين جودة الإنعاش."
+    },
+    {
+      id: 83,
+      part: "Airway",
+      category: "CPR & AED",
+      en: "You’re having lunch with a friend and he begins to choke on some food. He can’t speak, breathe or cough it up. How can you help?",
+      ar: "أثناء تناول الطعام بدأ صديقك يختنق ولا يستطيع الكلام أو التنفس أو السعال، ماذا تفعل؟",
+      options: [
+        "Put your fingers down his throat to dislodge the obstruction.",
+        "Do abdominal thrust.",
+        "Start CPR.",
+        "Continuous back slaps."
+      ],
+      correct: 1,
+      explanation: "في انسداد تام لمجرى الهواء عند البالغ تُستخدم مناورة الضغط البطني (Heimlich)."
+    },
+    {
+      id: 84,
+      part: "Airway",
+      category: "CPR & AED",
+      en: "You’re having lunch with a friend and he begins to choke on some food. He can speak, breathe and cough. How can you help?",
+      ar: "صديقك يشرُق بالطعام لكنه ما زال يستطيع الكلام والتنفس والسعال، ماذا تفعل؟",
+      options: [
+        "Put your fingers down his throat to dislodge the obstruction.",
+        "Do abdominal thrust.",
+        "Encourage him to cough and stay with him.",
+        "Continuous back slaps."
+      ],
+      correct: 2,
+      explanation: "طالما يستطيع السعال بفعالية يُشجَّع على الاستمرار في السعال مع مراقبته فقط."
+    },
+    {
+      id: 85,
+      part: "Priorities",
+      category: "Scene & Safety",
+      en: "Which has the patient priorities in the right order?",
+      ar: "أي ترتيب من التالي يضع أولويات المريض بالترتيب الصحيح؟",
+      options: [
+        "Bone trauma, Burn, Breathing.",
+        "Breathing, Bleeding, Burn, Bone trauma.",
+        "Bleeding, Breathing, Bone, Burn.",
+        "Burn, Breathing, Bone, Bleeding."
+      ],
+      correct: 1,
+      explanation: "أولوية الحياة: أولًا التنفس، ثم النزيف، ثم باقي الإصابات."
+    },
+    {
+      id: 86,
+      part: "Scene",
+      category: "Scene & Safety",
+      en: "What is the first action when examining patient?",
+      ar: "ما أول إجراء عند فحص مريض/مصاب؟",
+      options: [
+        "Breathing.",
+        "Pulse.",
+        "Speak to the victim and shake shoulder.",
+        "External bleeding."
+      ],
+      correct: 2,
+      explanation: "يُجرى تقييم الاستجابة أولًا بنداء المصاب وهز كتفه برفق."
+    },
+    {
+      id: 87,
+      part: "Head Injury",
+      category: "Trauma",
+      en: "How to recognize a patient with a fractured skull?",
+      ar: "كيف تتعرف على مريض لديه كسر في الجمجمة؟",
+      options: [
+        "He or she has a blurred vision.",
+        "He or she has headache.",
+        "Watery blood or clear fluid coming out of the ear or nose.",
+        "He is coughing."
+      ],
+      correct: 2,
+      explanation: "خروج سائل شفاف أو دم ممزوج بسائل من الأنف أو الأذن علامة خطيرة على كسر في قاعدة الجمجمة."
+    },
+    {
+      id: 88,
+      part: "CPR",
+      category: "CPR & AED",
+      en: "When you start CPR and you will check pulse:",
+      ar: "عند بداية CPR ما المدة القصوى لفحص النبض؟",
+      options: [
+        "Not more than 5 seconds.",
+        "Not more than 3 seconds.",
+        "Not more than 10 seconds.",
+        "Not more than 15 seconds."
+      ],
+      correct: 2,
+      explanation: "فحص النبض يجب ألا يتجاوز 10 ثوانٍ حتى لا يؤخر الإنعاش."
+    },
+    {
+      id: 89,
+      part: "Scene",
+      category: "Scene & Safety",
+      en: "The Egyptian ambulance service telephone number is:",
+      ar: "رقم خدمة الإسعاف في مصر هو:",
+      options: [
+        "112",
+        "123",
+        "111",
+        "122"
+      ],
+      correct: 1,
+      explanation: "رقم الإسعاف في مصر هو 123."
+    },
+    {
+      id: 90,
+      part: "Heart",
+      category: "CPR & AED",
+      en: "What would you give to someone who seems to have a heart attack?",
+      ar: "ماذا يمكن إعطاؤه لشخص يبدو أنه يعاني من جلطة قلبية؟",
+      options: [
+        "Massage.",
+        "Aspirin.",
+        "Water.",
+        "CPR."
+      ],
+      correct: 1,
+      explanation: "قرص أسبرين (إن لم يكن هناك مانع) قد يساعد على تقليل تجلط الدم حتى وصول الإسعاف."
+    },
+    {
+      id: 91,
+      part: "Head Injury",
+      category: "Trauma",
+      en: "Which of the following is not type of head injuries?",
+      ar: "أي مما يلي ليس نوعًا من إصابات الرأس؟",
+      options: [
+        "Concussion.",
+        "Brain contusion.",
+        "Skull fracture.",
+        "Vomiting blood."
+      ],
+      correct: 3,
+      explanation: "القيء الدموي عرض قد يصاحب إصابات أخرى، لكنه ليس نوعًا من إصابات الرأس نفسها."
+    },
+    {
+      id: 92,
+      part: "Head Injury",
+      category: "Trauma",
+      en: "Brief or partial loss of conscious level and loss of memory of events at the time of, or immediately preceding the injury is symptoms of:",
+      ar: "فقدان قصير أو جزئي للوعي وفقدان ذاكرة للأحداث وقت الإصابة أو قبلها مباشرة هو عرض لـ:",
+      options: [
+        "Concussion.",
+        "Skull fracture.",
+        "Brain contusion.",
+        "Brain tumor."
+      ],
+      correct: 0,
+      explanation: "هذه الأعراض نموذجية للارتجاج (Concussion)."
+    },
+    {
+      id: 93,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "Why should you cover burns with a clean or sterile dressing?",
+      ar: "لماذا يجب تغطية الحروق بضمادة نظيفة أو معقمة؟",
+      options: [
+        "To prevent infection.",
+        "To cool burned area.",
+        "To keep the burned area warm.",
+        "Both a and c."
+      ],
+      correct: 3,
+      explanation: "التغطية تقلل العدوى وتحافظ على حرارة الجسم في نفس الوقت."
+    },
+    {
+      id: 94,
+      part: "Burns",
+      category: "Burns & Heat",
+      en: "Second-degree burn:",
+      ar: "الحرق من الدرجة الثانية:",
+      options: [
+        "Involves only the top layer of skin.",
+        "Is red and blistered.",
+        "Destroys all layers of skin.",
+        "Is the most serious of burns."
+      ],
+      correct: 1,
+      explanation: "حروق الدرجة الثانية تتميز بالاحمرار ووجود فقاعات (Blisters)."
+    }
+
+
+
+
+    // كمل باقي أسئلة الـ PDF بنفس النمط لو حابب تضيف الكل.
+  ];
+
+  // ============== STATE & HELPERS ==============
+  const state = {
+    answered: {}, // key يمكن يبقى q-1, q-2
+    filterPart: "ALL",
+    filterCategory: "ALL",
+    search: ""
+  };
+
+  const statsEls = {
+    total: document.getElementById("stat-total"),
+    answered: document.getElementById("stat-answered"),
+    correct: document.getElementById("stat-correct"),
+    percent: document.getElementById("stat-percent")
+  };
+
+  const questionsContainer = document.getElementById("questionsContainer");
+
+  function updateStats() {
+    const total = allQuestions.length;
+    const answeredIds = Object.keys(state.answered);
+    const answeredCount = answeredIds.length;
+    const correctCount = answeredIds.filter(id => state.answered[id].isCorrect).length;
+    const percent = answeredCount === 0 ? 0 : Math.round((correctCount / answeredCount) * 100);
+
+    statsEls.total.textContent = total;
+    statsEls.answered.textContent = answeredCount;
+    statsEls.correct.textContent = correctCount;
+    statsEls.percent.textContent = percent + "%";
+  }
+
+  function filterQuestions() {
+    const search = state.search.trim().toLowerCase();
+    return allQuestions.filter(q => {
+      if (state.filterPart !== "ALL" && q.part !== state.filterPart) return false;
+      if (state.filterCategory !== "ALL" && q.category !== state.filterCategory) return false;
+
+      if (search) {
+        const hay = (q.en + " " + (q.ar || "") + " " + (q.part || "") + " " + (q.category || "")).toLowerCase();
+        if (!hay.includes(search)) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderQuestions() {
+    questionsContainer.innerHTML = "";
+    const list = filterQuestions();
+    list.forEach(q => {
+      const card = document.createElement("div");
+      card.className = "question-card";
+
+      const header = document.createElement("div");
+      header.className = "q-header";
+
+      const num = document.createElement("div");
+      num.className = "q-number";
+      num.textContent = q.id;
+
+      const meta = document.createElement("div");
+      meta.className = "q-meta";
+      meta.textContent = `${q.part || ""} • ${q.category || ""}`;
+
+      header.appendChild(num);
+      header.appendChild(meta);
+
+      const textEn = document.createElement("div");
+      textEn.className = "q-text-en";
+      textEn.textContent = q.en;
+
+      const textAr = document.createElement("div");
+      textAr.className = "q-text-ar";
+      textAr.textContent = q.ar || "";
+
+      const optionsGrid = document.createElement("div");
+      optionsGrid.className = "options-grid";
+
+      const footer = document.createElement("div");
+      footer.className = "q-footer hidden";
+      footer.innerHTML = `
+        <div><strong>Correct answer:</strong> <span class="correct-text"></span></div>
+        <div><strong>تفسير:</strong> <span class="exp-text"></span></div>
+      `;
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = opt;
+        btn.addEventListener("click", () => {
+          handleAnswer(q, idx, optionsGrid, footer);
+        });
+        optionsGrid.appendChild(btn);
+      });
+
+      card.appendChild(header);
+      card.appendChild(textEn);
+      card.appendChild(textAr);
+      card.appendChild(optionsGrid);
+      card.appendChild(footer);
+
+      questionsContainer.appendChild(card);
+    });
+
+    updateStats();
+  }
+
+  function handleAnswer(question, chosenIndex, optionsGrid, footer) {
+    const buttons = optionsGrid.querySelectorAll(".option-btn");
+    buttons.forEach((btn, idx) => {
+      btn.classList.remove("correct", "incorrect");
+      if (idx === question.correct) {
+        btn.classList.add("correct");
+      } else if (idx === chosenIndex) {
+        btn.classList.add("incorrect");
+      }
+    });
+
+    const isCorrect = chosenIndex === question.correct;
+    state.answered["Q" + question.id] = { chosen: chosenIndex, isCorrect };
+
+    footer.classList.remove("hidden");
+    footer.querySelector(".correct-text").textContent = question.options[question.correct];
+    footer.querySelector(".exp-text").textContent = question.explanation || "";
+
+    updateStats();
+  }
+
+  // search & filters
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    state.search = e.target.value;
+    renderQuestions();
+  });
+
+  document.getElementById("partFilters").addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn")) {
+      const value = e.target.getAttribute("data-part");
+      state.filterPart = value;
+      document.querySelectorAll("#partFilters .btn").forEach(btn => btn.classList.remove("active"));
+      e.target.classList.add("active");
+      renderQuestions();
+    }
+  });
+
+  document.getElementById("categoryFilters").addEventListener("click", (e) => {
+    if (e.target.classList.contains("btn")) {
+      const value = e.target.getAttribute("data-category");
+      state.filterCategory = value;
+      document.querySelectorAll("#categoryFilters .btn").forEach(btn => btn.classList.remove("active"));
+      e.target.classList.add("active");
+      renderQuestions();
+    }
+  });
+
+  // init
+  renderQuestions();
+</script>
+</body>
+</html>
